@@ -1,0 +1,26 @@
+---
+title: "mscatch"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mscatch}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(workflows)
+library(magrittr)
+```
+
+```{r table}
+mscatch::speciesLookupTable %>% 
+  tibble::as_tibble()
+
+```

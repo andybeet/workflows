@@ -12,6 +12,11 @@ LazyData: true
 URL: https://github.com/andybeet/workflows, https://andybeet.github.io/workflows/
 BugReports: https://github.com/andybeet/workflows/issues
 Imports: 
-    mscatch
+    mscatch,
+    tibble
 Remotes:
   NOAA-EDAB/mscatch
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
