@@ -13,39 +13,31 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: ubuntu-latest
-    # Only restrict concurrency for non-PR jobs
-    concurrency:
-      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+    runs-on: macOS-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
     steps:
       - uses: actions/checkout@v3
 
+      - uses: r-lib/actions/setup-r@v2
+
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          use-public-rspm: true
-
-      - name: install instant client
+      - name: Query dependencies
         run: |
-          sudo apt update
-          sudo apt install -y alien
-          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm
-          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-devel-19.3.0.0.0-1.x86_64.rpm
-          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-sqlplus-19.3.0.0.0-1.x86_64.rpm
-          sudo alien -i oracle-instantclient19.3*.rpm
-          sudo apt install -y libaio1
-          sudo -s
-          printf "\n\n# Oracle Client environment\n \
-          export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-          export ORACLE_HOME=/usr/lib/oracle/19.3/client64\n" | sudo tee /etc/profile.d/oracle-env.sh > /dev/null
-          . /etc/profile.d/oracle-env.sh
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
 
-        shell: bash
+      # - name: Cache R packages
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ${{ env.R_LIBS_USER }}
+      #     key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+      #     restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
 
       - name: Install binary dependencies
         if: runner.os != 'Linux'
@@ -58,14 +50,11 @@ jobs:
           install.packages("pkgdown", type = "binary")
         shell: Rscript {0}
 
-      - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
-        shell: Rscript {0}
+      - name: Install package
+        run: R CMD INSTALL .
 
-      - name: Deploy to GitHub pages 🚀
-        if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          clean: false
-          branch: gh-pages
-          folder: docs
+      - name: Deploy package
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
