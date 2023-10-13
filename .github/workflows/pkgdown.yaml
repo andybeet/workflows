@@ -30,6 +30,23 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: install instant client
+        run: |
+          sudo apt update
+          sudo apt install -y alien
+          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm
+          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-devel-19.3.0.0.0-1.x86_64.rpm
+          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-sqlplus-19.3.0.0.0-1.x86_64.rpm
+          sudo alien -i oracle-instantclient19.3*.rpm
+          sudo apt install -y libaio1
+          sudo -s
+          printf "\n\n# Oracle Client environment\n \
+          export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+          export ORACLE_HOME=/usr/lib/oracle/19.3/client64\n" | sudo tee /etc/profile.d/oracle-env.sh > /dev/null
+          . /etc/profile.d/oracle-env.sh
+
+        shell: bash
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::pkgdown, local::.
