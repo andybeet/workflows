@@ -47,7 +47,7 @@ jobs:
           export PHP_DTRACE=yes
           export EXTENSION_DIR=/usr/lib64/php/modules
           PATH=$PATH:$ORACLE_HOME/bin\n" | sudo tee /etc/profile.d/oracle.sh > /dev/null
-          . /etc/profile.d/oracle-env.sh
+          . /etc/profile.d/oracle.sh
 
 
 
