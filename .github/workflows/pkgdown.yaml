@@ -30,23 +30,37 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: install instant client
+      - name: install ROracle dependencies
         run: |
           sudo apt update
-          sudo apt install -y alien
+          sudo apt-get install -y alien libaio1 libaio-dev
           wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm
           wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-devel-19.3.0.0.0-1.x86_64.rpm
           wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-sqlplus-19.3.0.0.0-1.x86_64.rpm
-          sudo alien -i oracle-instantclient19.3*.rpm
-          sudo apt install -y libaio1
-          sudo -s
+          sudo alien -i --scripts oracle-instantclient19.3*.rpm
+
           printf "\n\n# Oracle Client environment\n \
-          export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-          export ORACLE_HOME=/usr/lib/oracle/19.3/client64\n" | sudo tee /etc/profile.d/oracle-env.sh > /dev/null
+          export TNS_ADMIN=/usr/lib/oracle/19.3/client64/lib/network/admin
+          export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib
+          export OCI_LIB=/usr/lib/oracle/19.3/client64/lib
+          export OCI_INC=/usr/include/oracle/19.3/client64
+          export PHP_DTRACE=yes
+          export EXTENSION_DIR=/usr/lib64/php/modules
+          PATH=$PATH:$ORACLE_HOME/bin\n" | sudo tee /etc/profile.d/oracle.sh > /dev/null
           . /etc/profile.d/oracle-env.sh
 
-        shell: bash
 
+
+
+
+        shell: bash
+          # sudo alien -i oracle-instantclient19.3*.rpm
+          # sudo apt install -y
+          # sudo -s
+          # printf "\n\n# Oracle Client environment\n \
+          # export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+          # export ORACLE_HOME=/usr/lib/oracle/19.3/client64\n" | sudo tee /etc/profile.d/oracle-env.sh > /dev/null
+          # . /etc/profile.d/oracle-env.sh
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::pkgdown, local::.
