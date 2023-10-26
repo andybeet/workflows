@@ -34,26 +34,30 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y alien libaio1 libaio-dev
-          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm
-          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-devel-19.3.0.0.0-1.x86_64.rpm
-          wget https://download.oracle.com/otn_software/linux/instantclient/193000/oracle-instantclient19.3-sqlplus-19.3.0.0.0-1.x86_64.rpm
-          sudo alien -i --scripts oracle-instantclient19.3*.rpm
+          wget https://download.oracle.com/otn_software/linux/instantclient/2112000/oracle-instantclient-basic-21.12.0.0.0-1.el8.x86_64.rpm
+          sudo alien -i --scripts oracle-instantclient*.rpm
 
           printf "\n\n# Oracle Client environment\n \
-          export TNS_ADMIN=/usr/lib/oracle/19.3/client64/lib/network/admin
-          export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib
-          export OCI_LIB=/usr/lib/oracle/19.3/client64/lib
-          export OCI_INC=/usr/include/oracle/19.3/client64
+          export ORACLE_HOME=/usr/lib/oracle/21/client64
+          export TNS_ADMIN=/usr/lib/oracle/21/client64/lib/network/admin
+          export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib
+          export OCI_LIB=/usr/lib/oracle/21/client64/lib
+          export OCI_INC=/usr/include/oracle/21/client64
           export PHP_DTRACE=yes
           export EXTENSION_DIR=/usr/lib64/php/modules
-          PATH=$PATH:$ORACLE_HOME/bin\n" | sudo tee /etc/profile.d/oracle.sh > /dev/null
+          PATH=$PATH:$ORACLE_HOME/bin \n" | sudo tee /etc/profile.d/oracle.sh > /dev/null
           . /etc/profile.d/oracle.sh
 
 
 
-
-
         shell: bash
+
+#         Sys.setenv('ORACLE_HOME' = "/usr/lib/oracle/21/client64/")
+# Sys.setenv('LD_LIBRARY_PATH' = "$ORACLE_HOME$/lib")
+# Sys.setenv('OCI_INC' = '$ORACLE_HOME$/sdk/include')
+# Sys.setenv('OCI_LIB64'='$ORACLE_HOME$')
+# Sys.setenv('TNS_ADMIN'='$ORACLE_HOME$/network/admin')
+# Sys.setenv('PATH'='$ORACLE_HOME$;$PATH$')
           # sudo alien -i oracle-instantclient19.3*.rpm
           # sudo apt install -y
           # sudo -s
