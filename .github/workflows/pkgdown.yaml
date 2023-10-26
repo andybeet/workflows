@@ -30,7 +30,7 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: install ROracle dependencies
+      - name: install Oracle instant client
         run: |
           sudo apt update
           sudo apt-get install -y alien libaio1 libaio-dev
