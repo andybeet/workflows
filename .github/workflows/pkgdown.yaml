@@ -48,23 +48,9 @@ jobs:
           PATH=$PATH:$ORACLE_HOME/bin \n" | sudo tee /etc/profile.d/oracle.sh > /dev/null
           . /etc/profile.d/oracle.sh
 
-
-
         shell: bash
 
-#         Sys.setenv('ORACLE_HOME' = "/usr/lib/oracle/21/client64/")
-# Sys.setenv('LD_LIBRARY_PATH' = "$ORACLE_HOME$/lib")
-# Sys.setenv('OCI_INC' = '$ORACLE_HOME$/sdk/include')
-# Sys.setenv('OCI_LIB64'='$ORACLE_HOME$')
-# Sys.setenv('TNS_ADMIN'='$ORACLE_HOME$/network/admin')
-# Sys.setenv('PATH'='$ORACLE_HOME$;$PATH$')
-          # sudo alien -i oracle-instantclient19.3*.rpm
-          # sudo apt install -y
-          # sudo -s
-          # printf "\n\n# Oracle Client environment\n \
-          # export LD_LIBRARY_PATH=/usr/lib/oracle/19.3/client64/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-          # export ORACLE_HOME=/usr/lib/oracle/19.3/client64\n" | sudo tee /etc/profile.d/oracle-env.sh > /dev/null
-          # . /etc/profile.d/oracle-env.sh
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::pkgdown, local::.
