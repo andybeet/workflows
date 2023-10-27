@@ -28,7 +28,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v2
         with:
-          r-version: '4.2.2'
+          r-version: '4.3.1'
 
       - name: install Oracle instant client
         run: |
@@ -43,7 +43,7 @@ jobs:
           sudo printf "\n\n# Oracle Client environment\n \
           export ORACLE_HOME=/usr/lib/oracle/21/client64
           export TNS_ADMIN=/usr/lib/oracle/21/client64/lib/network/admin
-          export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib:/opt/R/4.2.2/lib/R/lib
+          export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib:/opt/R/4.3.1/lib/R/lib
           export OCI_LIB=/usr/lib/oracle/21/client64/lib
           export OCI_INC=/usr/include/oracle/21/client64
           export PHP_DTRACE=yes
@@ -52,7 +52,7 @@ jobs:
           sudo chmod 644 /etc/profile.d/oracle.sh
           . /etc/profile.d/oracle.sh
 
-          sudo cp -r /usr/include/oracle/21/client64/ /opt/R/4.2.1/lib/R/include
+          sudo cp -r /usr/include/oracle/21/client64/ /opt/R/4.3.1/lib/R/include
 
           sudo mkdir /usr/lib/oracle/21/client64/rdbms
           sudo mkdir /usr/lib/oracle/21/client64/rdbms/public
