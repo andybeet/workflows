@@ -38,9 +38,13 @@ jobs:
           wget https://download.oracle.com/otn_software/linux/instantclient/2112000/oracle-instantclient-devel-21.12.0.0.0-1.el8.x86_64.rpm
           wget https://download.oracle.com/otn_software/linux/instantclient/2112000/oracle-instantclient-odbc-21.12.0.0.0-1.el8.x86_64.rpm
           wget https://download.oracle.com/otn_software/linux/instantclient/2112000/oracle-instantclient-sqlplus-21.12.0.0.0-1.el8.x86_64.rpm
-          sudo alien -i --scripts oracle-instantclient*.rpm
+          sudo alien -i oracle-instantclient-basic-21.12.0.0.0-1.el8.x86_64.rpm
+          sudo alien -i oracle-instantclient-devel-21.12.0.0.0-1.el8.x86_64.rpm
+          sudo alien -i oracle-instantclient-odbc-21.12.0.0.0-1.el8.x86_64.rpm
+          sudo alien -i oracle-instantclient-sqlplus-21.12.0.0.0-1.el8.x86_64.rpm
 
           sudo printf "\n\n# Oracle Client environment\n \
+
           export ORACLE_HOME=/usr/lib/oracle/21/client64
           export TNS_ADMIN=/usr/lib/oracle/21/client64/lib/network/admin
           export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib:/opt/R/4.3.1/lib/R/lib
@@ -52,12 +56,20 @@ jobs:
           sudo chmod 644 /etc/profile.d/oracle.sh
           . /etc/profile.d/oracle.sh
 
-          sudo cp -r /usr/include/oracle/21/client64/ /opt/R/4.3.1/lib/R/include
 
-          sudo mkdir /usr/lib/oracle/21/client64/rdbms
-          sudo mkdir /usr/lib/oracle/21/client64/rdbms/public
+          sudo R CMD INSTALL --configure-args='--with-oci-lib=/usr/lib/oracle/21/client64/lib --with-oci-inc=/usr/include/oracle/21/client64' ROracle_1.3-1.tar.gz
+
+
 
         shell: bash
+          # sudo cp -r /usr/include/oracle/21/client64/ /opt/R/4.3.1/lib/R/include
+          #
+          # sudo mkdir /usr/lib/oracle/21/client64/rdbms
+          # sudo mkdir /usr/lib/oracle/21/client64/rdbms/public
+          #
+          # cd /opt/R/4.2.1/lib/R/include || /usr/include/oracle/21/client64/
+          #
+          # find /usr/include/oracle/21/client64/* -exec ln -s {} . \;
 
 
       - uses: r-lib/actions/setup-r-dependencies@v2
