@@ -56,8 +56,8 @@ jobs:
           sudo chmod 644 /etc/profile.d/oracle.sh
           . /etc/profile.d/oracle.sh
 
-
-          sudo R CMD INSTALL --configure-args='--with-oci-lib=/usr/lib/oracle/21/client64/lib --with-oci-inc=/usr/include/oracle/21/client64' ROracle_1.3-1.tar.gz
+          wget https://cran.r-project.org/src/contrib/ROracle_1.3-1.1.tar.gz
+          sudo R CMD INSTALL --configure-args='--with-oci-lib=/usr/lib/oracle/21/client64/lib --with-oci-inc=/usr/include/oracle/21/client64' ROracle_1.3-1.1.tar.gz
 
 
 
