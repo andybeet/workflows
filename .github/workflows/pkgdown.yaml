@@ -63,7 +63,8 @@ jobs:
           . /etc/profile.d/oracle.sh
 
 
-          sudo /usr/local/bin/Rscript -e "install.packages(`DBI`, repos='http://cran.rstudio.com/')"
+          wget https://cran.rstudio.com/src/contrib/DBI_1.1.3.tar.gz
+          sudo R CMD INSTALL DBI_1.1.3.tar.gz
           wget https://cran.r-project.org/src/contrib/ROracle_1.3-1.1.tar.gz
           sudo R CMD INSTALL --configure-args='--with-oci-lib=/usr/lib/oracle/21/client64/lib --with-oci-inc=/usr/include/oracle/21/client64' ROracle_1.3-1.1.tar.gz
 
