@@ -30,6 +30,12 @@ jobs:
         with:
           r-version: '4.3.1'
 
+      - name: install DBI
+        run: |
+          install.packages("DBI")
+        shell: Rscript {0}
+
+
       - name: install Oracle instant client
         run: |
           sudo apt update
