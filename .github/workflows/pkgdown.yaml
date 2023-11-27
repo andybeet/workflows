@@ -22,19 +22,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.3.1'
-
-      - name: install DBI
-        run: |
-          install.packages("DBI")
-        shell: Rscript {0}
-
 
       - name: install Oracle instant client
         run: |
@@ -49,37 +43,24 @@ jobs:
           sudo alien -i oracle-instantclient-odbc-21.12.0.0.0-1.el8.x86_64.rpm
           sudo alien -i oracle-instantclient-sqlplus-21.12.0.0.0-1.el8.x86_64.rpm
 
-          sudo printf "\n\n# Oracle Client environment\n \
 
-          export ORACLE_HOME=/usr/lib/oracle/21/client64
-          export TNS_ADMIN=/usr/lib/oracle/21/client64/lib/network/admin
-          export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib:/opt/R/4.3.1/lib/R/lib
-          export OCI_LIB=/usr/lib/oracle/21/client64/lib
-          export OCI_INC=/usr/include/oracle/21/client64
-          export PHP_DTRACE=yes
-          export EXTENSION_DIR=/usr/lib64/php/modules
-          PATH=$PATH:/usr/local/bin \n" | sudo tee /etc/profile.d/oracle.sh > /dev/null
-          sudo chmod 644 /etc/profile.d/oracle.sh
-          . /etc/profile.d/oracle.sh
-
-
-          wget https://cran.rstudio.com/src/contrib/DBI_1.1.3.tar.gz
-          sudo R CMD INSTALL DBI_1.1.3.tar.gz
-          wget https://cran.r-project.org/src/contrib/ROracle_1.3-1.1.tar.gz
-          sudo R CMD INSTALL --configure-args='--with-oci-lib=/usr/lib/oracle/21/client64/lib --with-oci-inc=/usr/include/oracle/21/client64' ROracle_1.3-1.1.tar.gz
-
-
-
+          echo "export ORACLE_HOME=/usr/lib/oracle/21/client64" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export TNS_ADMIN=/usr/lib/oracle/21/client64/lib/network/admin" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib:${LD_LIBRARY_PATH}" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export OCI_LIB=/usr/lib/oracle/21/client64/lib" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export OCI_INC=/usr/include/oracle/21/client64}" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export PHP_DTRACE=yes" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export EXTENSION_DIR=/usr/lib64/php/modules" | sudo tee -a /etc/profile.d/oracle.sh
+          echo "export PATH=\$ORACLE_HOME/bin:\$PATH" | sudo tee -a /etc/profile.d/oracle.sh          sudo chmod +x /etc/profile.d/oracle.sh
+          source /etc/profile.d/oracle.sh
         shell: bash
-          # sudo cp -r /usr/include/oracle/21/client64/ /opt/R/4.3.1/lib/R/include
-          #
-          # sudo mkdir /usr/lib/oracle/21/client64/rdbms
-          # sudo mkdir /usr/lib/oracle/21/client64/rdbms/public
-          #
-          # cd /opt/R/4.2.1/lib/R/include || /usr/include/oracle/21/client64/
-          #
-          # find /usr/include/oracle/21/client64/* -exec ln -s {} . \;
 
+
+      - name: Install R packages
+        run: |
+          install.packages("DBI")
+          install.packages("ROracle", type = "source", configure.args = "--with-oci-lib=/usr/lib/oracle/21/client64/lib --with-oci-inc=/usr/include/oracle/21/client64")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
